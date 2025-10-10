@@ -4,76 +4,97 @@
 #include <string.h>
 #include <sys/wait.h>
 
-void setup_input_output(int pip[2], int prev_pipe)
+void child_process(int prev_pipe, int pip[2], char *cmd[])
 {
 	if (prev_pipe != -1){
-		if (pip[0] != -1){
-			close(pip[0]); pip[0] = -1;
-		}
 		if (dup2(prev_pipe, STDIN_FILENO) == -1){
+			close(prev_pipe);
+			if (pip[0] != -1){
+				close(pip[0]);
+				close(pip[1]);
+			}
 			exit(1);
 		}
-		close(prev_pipe); prev_pipe = -1;
+		close(prev_pipe);
 	}
-	if (pip[1] != -1){
+	if (pip[0] != -1){
+		close(pip[0]);
 		if (dup2(pip[1], STDOUT_FILENO) == -1){
+			close(pip[1]);
 			exit(1);
 		}
-		close(pip[1]); pip[1] = -1;
+		close(pip[1]);
 	}
+	execvp(*cmd, cmd);
+	exit(1);
 }
 
-void child_process(int pip[2], int prev_pipe, char *cmd[])
+void close_pipe_ends(int prev_pipe, int pip[2])
 {
-	setup_input_output(pip, prev_pipe);
-	if (execvp(*cmd, cmd) == -1)
-		exit(1);
-}
-
-int wait_for_child()
-{
-	int status;
-	wait(&status);
-	if (!WIFEXITED(status))
-		return 1;
-	if (WEXITSTATUS(status))
-		return 1;
-	return 0;
+	if (prev_pipe != -1){
+		close(prev_pipe);
+	}
+	if (pip[0] != -1){
+		close(pip[0]);
+		close(pip[1]);
+	}
 }
 
 int picoshell(char **cmds[])
 {
 	int prev_pipe = -1;
 	int pip[2];
+	int status;
 	pid_t pid;
 	int i = 0;
-	int exit;
 
 	while (cmds[i])
 	{
-		pip[0] = -1;
-		pip[1] = -1;
 		if (cmds[i + 1]){
-			if (pipe(pip) == -1)
+			if (pipe(pip) == -1){
+				close_pipe_ends(prev_pipe, pip);
 				return 1;
-		}
-		pid = fork();
-		if (pid == -1)
-			return 1;
-		if (pid == 0)
-			child_process(pip, prev_pipe, cmds[i]);
-		if (pip[0] != -1){
-			prev_pipe = pip[0];
-			close(pip[1]);
+			}
 		}
 		else{
-			if (prev_pipe != -1)
-				close(prev_pipe);
+			pip[0] = -1;
+			pip[1] = -1;
 		}
-		exit = wait_for_child();
+		pid = fork();
+		if (pid == -1){
+			close_pipe_ends(prev_pipe, pip);
+			return 1;
+		}
+		if (pid == 0){
+			child_process(prev_pipe, pip, cmds[i]);
+		}
+		if (pip[0] != -1){
+			if (prev_pipe != -1){
+				close(prev_pipe);
+			}
+			prev_pipe = pip[0];
+			pip[0] = -1;
+			close(pip[1]);
+			pip[1] = -1;
+		}
+		else{
+			if (prev_pipe != -1){
+				close(prev_pipe);
+				prev_pipe = -1;
+			}
+		}
+		wait(&status);
+		if (!WIFEXITED(status)){
+			close_pipe_ends(prev_pipe, pip);
+			return 1;
+		}
+		if (WEXITSTATUS(status)){
+			close_pipe_ends(prev_pipe, pip);
+			return 1;
+		}
 		i++;
 	}
-	return exit;
+	return 0;
 }
 
 int main(int argc, char *argv[]) {

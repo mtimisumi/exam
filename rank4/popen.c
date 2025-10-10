@@ -36,8 +36,6 @@ int pipe_to_write(pid_t pid, int pip[2], char **cmd)
 			exit(1);
 	}
 	close(pip[0]);
-	write(pip[1], "hello my name is mitani\n", 24);
-		close(pip[1]);
 	return 0;
 }
 
@@ -54,20 +52,10 @@ int ft_popen(char **cmd, char *c)
 		if (pipe_to_read(pid, pip, cmd) == -1){
 			return -1;
 		}
-		wait(&status);
-		if (!WIFEXITED(status) || WEXITSTATUS(status)){
-			close(pip[0]); close(pip[1]);
-			return -1;
-		}
 		return pip[0];
 	}
 	if (*c == 'w'){
 		if (pipe_to_write(pid, pip, cmd) == -1){
-			return -1;
-		}
-		wait(&status);
-		if (!WIFEXITED(status) || WEXITSTATUS(status)){
-			close(pip[0]); close(pip[1]);
 			return -1;
 		}
 		return pip[1];
