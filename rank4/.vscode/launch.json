@@ -8,8 +8,8 @@
 			"type": "lldb",
 			"request": "launch",
 			"name": "Debug",
-			"program": "${workspaceFolder}/vbc",
-			"args": ["1"],
+			"program": "${workspaceFolder}/rank4/calculator/a.out",
+			"args": ["5*(3+2)"],
 			"cwd": "${workspaceFolder}"
 		}
 	]

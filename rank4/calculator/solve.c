@@ -63,5 +63,6 @@ int solve(t_data **data)
 	result = (*data)->num;
 	free(*data);
 	printf("result: %d\n", result);
+	print_data(*data);
 	return result;
 }
