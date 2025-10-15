@@ -3,19 +3,30 @@
 char *expr_dup(char **arg)
 {
 	char *s;
+	int len = 0;
 	int i = 0;
+	int bracket = 1;
 
 	(*arg)++;
-	while((*arg)[i] != ')')
-		i++;
-	s = malloc(i + 1);
-	i = 0;
-	while (**arg != ')')
+	while ((*arg)[len])
+	{
+		if ((*arg)[len] == '(')
+			bracket++;
+		if ((*arg)[len] == ')'){
+			bracket--;
+			if (bracket == 0)
+				break;
+		}
+		len++;
+	}
+	s = malloc(len + 1);
+	while (len > i)
 	{
 		s[i] = **arg;
 		i++;
 		(*arg)++;
 	}
+	printf("here?\n");
 	s[i] = '\0';
 	return s;
 }
