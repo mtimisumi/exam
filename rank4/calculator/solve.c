@@ -26,7 +26,7 @@ void solve_mult(t_data *data)
 
 	while (data && data->next)
 	{
-		if (data->sign == '*'){
+		while (data->sign == '*'){
 			data->num *= (data->next)->num;
 			printf("n after mult: %d\n", data->num);
 			data->sign = (data->next)->sign;
@@ -50,7 +50,6 @@ void solve_add(t_data *data)
 		data->next = (data->next)->next;
 		free(temp);
 	}
-	data = data->next;
 }
 
 int solve(t_data **data)

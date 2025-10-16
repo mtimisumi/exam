@@ -1,5 +1,11 @@
 #include "header.h"
 
+// int calc()
+// {
+// 	t_data *data = NULL
+
+// }
+
 int main(int argc, char *argv[])
 {
 	t_data *data = NULL;
