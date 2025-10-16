@@ -20,6 +20,7 @@ typedef struct data
 }			t_data;
 
 int main(int argc, char *argv[]);
+bool is_valid(char *arg);
 void parse(char *arg, t_data **data);
 int solve(t_data **data);
 

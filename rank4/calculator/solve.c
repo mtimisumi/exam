@@ -24,7 +24,7 @@ void solve_mult(t_data *data)
 {
 	t_data *temp;
 
-	while (data->next)
+	while (data && data->next)
 	{
 		if (data->sign == '*'){
 			data->num *= (data->next)->num;
@@ -42,7 +42,7 @@ void solve_add(t_data *data)
 {
 	t_data *temp;
 
-	while (data->next)
+	while (data && data->next)
 	{
 		data->num += (data->next)->num;
 		printf("n after add: %d\n", data->num);
@@ -57,12 +57,13 @@ int solve(t_data **data)
 {
 	int result;
 
+	print_data(*data);
 	solve_expr(*data);
 	solve_mult(*data);
 	solve_add(*data);
 	result = (*data)->num;
 	free(*data);
+	*data = NULL;
 	printf("result: %d\n", result);
-	print_data(*data);
 	return result;
 }
