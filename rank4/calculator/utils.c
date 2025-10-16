@@ -26,7 +26,6 @@ char *expr_dup(char **arg)
 		i++;
 		(*arg)++;
 	}
-	printf("here?\n");
 	s[i] = '\0';
 	return s;
 }
