@@ -19,20 +19,14 @@ typedef struct data
 	struct data *next;
 }			t_data;
 
-int main(int argc, char *argv[]);
-bool is_valid(char *arg);
-void parse(char *arg, t_data **data);
-// int solve(t_data **data);
-int calc(char *arg);
-
-// temp
-void print_data(t_data *data);
-
-// utils
-int to_digit(char c);
-char *expr_dup(char **arg);
-void solve_expr(t_data *data);
-void solve_mult(t_data *data);
-void solve_add(t_data *data);
+int 	main(int argc, char *argv[]);
+bool 	is_valid(char *arg);
+void	parse(char *arg, t_data **data);
+int 	calc(char *arg);
+int 	to_digit(char c);
+char 	*expr_dup(char **arg);
+void 	solve_expr(t_data *data);
+void 	solve_mult(t_data *data);
+void 	solve_add(t_data *data);
 
 #endif

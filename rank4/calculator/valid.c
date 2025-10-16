@@ -1,6 +1,5 @@
 #include "header.h"
 
-
 bool validate(char c, int *expecting, int *bracket)
 {
 	if (*expecting == NUM){

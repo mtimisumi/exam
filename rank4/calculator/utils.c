@@ -37,14 +37,3 @@ int to_digit(char c)
 	n = c - '0';
 	return n;
 }
-
-void print_data(t_data *data)
-{
-	while (data)
-	{
-		printf("expr: %s\n", data->expr);
-		printf("num: %d\n", data->num);
-		printf("sign: %c\n\n", data->sign);
-		data = data->next;
-	}
-}
